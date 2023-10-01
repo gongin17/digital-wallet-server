@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 import bodyParser from "body-parser";
 import { routerTransactions } from "./routes/create_transaction";
 
@@ -7,7 +8,7 @@ import  {AppDataSource} from "./config/dbConfig";
 
 const PORT = process.env.APP_PORT || 3001;
 
-const allowedOrigins=['http://localhost:3000']
+const allowedOrigins=[process.env.ORIGIN]
 
 
 

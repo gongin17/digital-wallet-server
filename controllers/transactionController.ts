@@ -60,7 +60,7 @@ const getAmountInTransactionsToday = async (req: Request, res: Response) => {
     .createQueryBuilder("transaction")
     .select("coalesce(SUM(transaction.amount),0)", "sum")
     .where("transaction.type = :type", { type: "withraw" })
-
+    
     .getRawOne();
 
   return res.json({ sum });
