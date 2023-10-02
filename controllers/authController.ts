@@ -10,7 +10,6 @@ import { Client } from "../entities/Client";
 import { AppDataSource } from "../config/dbConfig";
 
 const signup = async (req: Request, res: Response) => {
-  // const {username ,password, firstName ,lastName,email,balance }=req.body;
 
   const clientData = req.body;
   console.log("client data :::", clientData);
@@ -31,7 +30,6 @@ const signup = async (req: Request, res: Response) => {
     res.status(500).json({"message": err.message})
   }
 
-  //test111100000
 };
 
 const login = async (req: Request, res: Response) => {
@@ -63,7 +61,7 @@ const login = async (req: Request, res: Response) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "1m",
+      expiresIn: "3m",
     }
   );
 
@@ -73,13 +71,13 @@ const login = async (req: Request, res: Response) => {
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "15min",
     }
   );
 
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -121,7 +119,7 @@ const refresh = async (req: Request, res: Response) => {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "1m",
+          expiresIn: "3m",
         }
       );
 
@@ -132,7 +130,7 @@ const refresh = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
-  res.clearCookie("jwt", { httpOnly: true, secure: false });
+  res.clearCookie("jwt", { httpOnly: true, secure: true });
   res.json({ message: "cookie cleared " });
 };
 
