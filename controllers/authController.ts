@@ -79,7 +79,7 @@ const login = async (req: Request, res: Response) => {
 
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -132,7 +132,7 @@ const refresh = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
-  res.clearCookie("jwt", { httpOnly: true, secure: false });
+  res.clearCookie("jwt", { httpOnly: true, secure: true });
   res.json({ message: "cookie cleared " });
 };
 
