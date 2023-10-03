@@ -40,6 +40,7 @@ const login = async (req: Request, res: Response) => {
   try{
     const repo = AppDataSource.getRepository(Client);
   if (!username || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   const foundUser = await repo.findOne({
@@ -49,10 +50,12 @@ const login = async (req: Request, res: Response) => {
   });
 
   if (!foundUser) {
+    return res.status(401).json({ message: 'unauthorized' });
   }
 
   const match = await bcrypt.compare(password, foundUser?.password);
   if (!match) {
+    return res.status(401).json({ message: 'unauthorized' });
   }
 
   const accessToken = jwt.sign(
