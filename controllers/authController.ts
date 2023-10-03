@@ -33,11 +33,12 @@ const signup = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  
   
 
 
   try{
+    const { username, password } = req.body;
     const repo = AppDataSource.getRepository(Client);
   if (!username || !password) {
     return res.status(400).json({ message: 'All fields are required' });
