@@ -36,6 +36,9 @@ const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
   const repo = AppDataSource.getRepository(Client);
 
+
+  try{
+
   if (!username || !password) {
   }
 
@@ -83,14 +86,20 @@ const login = async (req: Request, res: Response) => {
   });
 
   res.json({ accessToken });
+}catch (err:any) {
+  res.status(500).json({"message": err.message})
+}
 };
 
 const refresh = async (req: Request, res: Response) => {
   const cookies = req.cookies;
 
+try{
+  
   if (!cookies?.jwt) {
     console.log("no cookies or jwt on cookies");
   }
+
   const refreshToken = cookies.jwt;
   jwt.verify(
     refreshToken,
@@ -122,16 +131,29 @@ const refresh = async (req: Request, res: Response) => {
           expiresIn: "3m",
         }
       );
-
       res.json({ accessToken });
-    }
-  );
-};
+    })
+
+   }catch (err:any) {
+    res.status(500).json({"message": err.message})
+  }
+}
+
+
+
 const logout = async (req: Request, res: Response) => {
   const cookies = req.cookies;
+
+  try{
+
   if (!cookies?.jwt) return res.sendStatus(204);
   res.clearCookie("jwt", { httpOnly: true, secure: true });
   res.json({ message: "cookie cleared " });
-};
+
+  }catch (err:any) {
+    res.status(500).json({"message": err.message})
+  }
+}
+ 
 
 module.exports = { login, signup, refresh, logout };
