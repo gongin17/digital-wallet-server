@@ -34,11 +34,11 @@ const signup = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
-  const repo = AppDataSource.getRepository(Client);
+  
 
 
   try{
-
+    const repo = AppDataSource.getRepository(Client);
   if (!username || !password) {
   }
 
