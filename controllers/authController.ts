@@ -34,14 +34,12 @@ const signup = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   
-  
-
 
   try{
     const { username, password } = req.body;
     const repo = AppDataSource.getRepository(Client);
   if (!username || !password) {
-    return res.status(400).json({ message: 'All fields are required' ,values:req.body });
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
   const foundUser = await repo.findOne({
@@ -51,12 +49,12 @@ const login = async (req: Request, res: Response) => {
   });
 
   if (!foundUser) {
-    return res.status(401).json({ message: 'unauthorized' });
+    return res.status(401).json({ message: 'username do not exist' });
   }
 
   const match = await bcrypt.compare(password, foundUser?.password);
   if (!match) {
-    return res.status(401).json({ message: 'unauthorized' });
+    return res.status(401).json({ message: 'unauthorized wrong password' });
   }
 
   const accessToken = jwt.sign(
@@ -84,7 +82,7 @@ const login = async (req: Request, res: Response) => {
 
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -101,7 +99,7 @@ const refresh = async (req: Request, res: Response) => {
 try{
   
   if (!cookies?.jwt) {
-    console.log("no cookies or jwt on cookies");
+    console.log("no cookies or no jwt on cookies");
   }
 
   const refreshToken = cookies.jwt;
@@ -110,7 +108,7 @@ try{
     process.env.REFRESH_TOKEN_SECRET,
     async (err: any, decoded: any) => {
       if (err) {
-        console.log("error", err);
+        return res.status(403).json({message:"Forbidden"})
       }
       const repo = AppDataSource.getRepository(Client);
       const foundUser = await repo.findOne({
@@ -151,7 +149,7 @@ const logout = async (req: Request, res: Response) => {
   try{
 
   if (!cookies?.jwt) return res.sendStatus(204);
-  res.clearCookie("jwt", { httpOnly: true, secure: true });
+  res.clearCookie("jwt", { httpOnly: true, secure: false ,sameSite: "none"});
   res.json({ message: "cookie cleared " });
 
   }catch (err:any) {

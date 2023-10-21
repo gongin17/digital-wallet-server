@@ -7,8 +7,6 @@ import  {AppDataSource} from "./config/dbConfig";
 
 const PORT = process.env.APP_PORT || 3001;
 const allowedOrigins=[process.env.ORIGIN]
-
-
 const cookieParser=require("cookie-parser")
 const cors=require("cors")
 

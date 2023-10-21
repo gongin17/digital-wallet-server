@@ -55,12 +55,29 @@ const getTransactionsMonth = async (req: Request, res: Response) => {
   return res.json(repo);
 };
 /*sum in*/
-const getAmountInTransactionsToday = async (req: Request, res: Response) => {
+
+const getAmountInTransactionsTotal = async (req: Request, res: Response) => {
+  
   const { sum } = await AppDataSource.getRepository(Transaction)
     .createQueryBuilder("transaction")
     .select("coalesce(SUM(transaction.amount),0)", "sum")
-    .where("transaction.type = :type", { type: "withraw" })
+    .where("transaction.type = :type", { type: "deposit" })
     
+    .getRawOne();
+
+  return res.json({ sum });
+};
+
+const getAmountInTransactionsToday = async (req: Request, res: Response) => {
+
+ 
+  const { sum } = await AppDataSource.getRepository(Transaction)
+    .createQueryBuilder("transaction")
+    .select("coalesce(SUM(transaction.amount),0)", "sum")
+    .where("transaction.type = :type", { type: "deposit" }) 
+    .andWhere("transaction.transaction_date= :today", {
+      today: currentdate,
+    })
     .getRawOne();
 
   return res.json({ sum });
@@ -84,7 +101,7 @@ const getAmountInTransactionsMonth = async (req: Request, res: Response) => {
   const { sum } = await AppDataSource.getRepository(Transaction)
     .createQueryBuilder("transaction")
     .select("coalesce(SUM(transaction.amount),0)", "sum")
-    .where("transaction.type = :type", { type: "withraw" })
+    .where("transaction.type = :type", { type: "deposit" })
     .andWhere("(:today-transaction.transaction_date)<=30  ", {
       today: currentdate,
     })
@@ -95,11 +112,26 @@ const getAmountInTransactionsMonth = async (req: Request, res: Response) => {
 };
 
 /*sum Out*/
+
+const getAmountOutTransactionsTotal= async (req: Request, res: Response) => {
+  const { sum } = await AppDataSource.getRepository(Transaction)
+    .createQueryBuilder("transaction")
+    .select("coalesce(SUM(transaction.amount),0)", "sum")
+    .where("transaction.type = :type", { type: "withraw" })
+
+    .getRawOne();
+
+  return res.json({ sum });
+};
+
 const getAmountOutTransactionsToday = async (req: Request, res: Response) => {
   const { sum } = await AppDataSource.getRepository(Transaction)
     .createQueryBuilder("transaction")
     .select("coalesce(SUM(transaction.amount),0)", "sum")
     .where("transaction.type = :type", { type: "withraw" })
+     .andWhere("transaction.transaction_date = :today ", {
+      today: currentdate,
+    })
 
     .getRawOne();
 

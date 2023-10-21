@@ -4,7 +4,7 @@ const transactionController =require("../controllers/transactionController")
 const verifyJWT = require("../middleware/verifyJWT");
 const router = express.Router();
 
-//router.use(verifyJWT)
+router.use(verifyJWT)
 
 router.post("/api/transaction",transactionController.createTransaction)
 .get("/api/transaction",transactionController.getTransactions)
