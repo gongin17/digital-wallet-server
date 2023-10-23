@@ -66,7 +66,7 @@ const login = async (req: Request, res: Response) => {
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "3m",
+      expiresIn: "30m",
     }
   );
 
@@ -76,13 +76,13 @@ const login = async (req: Request, res: Response) => {
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "15min",
+      expiresIn: "1d",
     }
   );
 
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -130,7 +130,7 @@ try{
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: "3m",
+          expiresIn: "30m",
         }
       );
       res.json({ accessToken });
@@ -149,13 +149,26 @@ const logout = async (req: Request, res: Response) => {
   try{
 
   if (!cookies?.jwt) return res.sendStatus(204);
-  res.clearCookie("jwt", { httpOnly: true, secure: false ,sameSite: "none"});
+  res.clearCookie("jwt", { httpOnly: true, secure: true ,sameSite: "none"});
   res.json({ message: "cookie cleared " });
 
   }catch (err:any) {
     res.status(500).json({"message": err.message})
   }
 }
+
+const getBalance = async (req: Request, res: Response) => {
+
+
+  const { balance } = await AppDataSource.getRepository(Client)
+  .createQueryBuilder("client")
+  .select("client.balance", "balance")
+    .where("client.username = :username", { username: req.body.username })
+    
+    .getRawOne();
+
+  return res.json({ balance });
+};
  
 
-module.exports = { login, signup, refresh, logout };
+module.exports = { login, signup, refresh, logout ,getBalance };

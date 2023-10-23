@@ -178,4 +178,6 @@ module.exports = {
   getAmountOutTransactionsMonth,
   getAmountOutTransactionsToday,
   getAmountInTransactionsMonth,
+  getAmountOutTransactionsTotal,
+  getAmountInTransactionsTotal
 };

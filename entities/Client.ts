@@ -12,9 +12,11 @@ export class Client {
     })
     balance: number
     @Column({
-        nullable: true
+        nullable: true,
+        unique:true
     })
     username: string
+
 
     @Column({
         nullable: true
